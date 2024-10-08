@@ -19,19 +19,17 @@ class BlockProgressive:
         self.current_success=self.base_success
         self.increment=increment
     
+        self.frame_size = 500
+        self.block_sprite = pygame.image.load("./assets/StoneBlock.png")
+        self.block_frame = self.block_sprite.subsurface(pygame.Rect( 0 * self.frame_size, 0 * self.frame_size,
+                                                                    self.frame_size,
+                                                                    self.frame_size))
+    
+    
     def draw(self):
         pygame.draw.rect(self.screen, "BROWN", self.blockRect)
-    
-    # def dig_block(self):
-    #     if(self.failCount >= 3):
-    #         return self.RandomOre()
-    #     elif random.random() < 0.5:
-    #         self.blockBroken = True
-    #         return self.RandomOre()
-    #     else:
-    #         self.blockBroken = False
-    #         self.failCount += 1
-    #         return None
+        self.screen.blit(self.block_frame,  pygame.Vector2(self.blockRect.x,self.blockRect.y) - pygame.Vector2(250, 250))
+
           
     def dig_block(self):
 

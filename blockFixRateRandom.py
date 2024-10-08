@@ -18,10 +18,18 @@ class BlockFixRate:
         self.fixed_success=fixed_rate
         self.base_prob=prob
         
+        self.frame_size = 500
+        self.block_sprite = pygame.image.load("./assets/StoneBlock.png")
+        self.block_frame = self.block_sprite.subsurface(pygame.Rect( 0 * self.frame_size, 0 * self.frame_size,
+                                                                    self.frame_size,
+                                                                    self.frame_size))
+    
+        
     
     def draw(self):
-        pygame.draw.rect(self.screen, "BROWN", self.blockRect)        
-        
+        pygame.draw.rect(self.screen, "BROWN", self.blockRect)       
+        self.screen.blit(self.block_frame,  pygame.Vector2(self.blockRect.x,self.blockRect.y) - pygame.Vector2(250, 250))
+
     def dig_block(self):
         if self.attempt_count >= self.fixed_success:
             self.attempt_count=0

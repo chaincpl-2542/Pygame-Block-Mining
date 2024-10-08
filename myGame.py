@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from blockMarblebag import BlockMarblebag
 from blockFixRateRandom import BlockFixRate
 from blockPredetermination import BlockPredetermination
@@ -8,7 +9,7 @@ from blockProgressive import BlockProgressive
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1200, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 block_rect = pygame.Rect(WIDTH//2 - 50, HEIGHT//2 - 50, 100, 100)
 block = BlockMarblebag(screen)
@@ -20,6 +21,10 @@ selected_option = "marblebag"
 dropdown_rect = pygame.Rect(50, 50, 200, 40)
 option_rects = [pygame.Rect(50, 90 + i * 40, 200, 40) for i in range(len(dropdown_options))]
 check_selected_option = None
+isBlockBroken = False
+
+cooldown_start_time = 0
+cooldown_duration = 2 
 
 def draw_text(text, pos, color="BLACK"):
     label = font.render(text, True, color)
@@ -41,24 +46,32 @@ while running:
     #pygame.draw.rect(screen, "WHITE", block_rect)
     draw_dropdown()
     
-    if selected_option == "marblebag" and check_selected_option != selected_option:
-        check_selected_option = "marblebag"
-        seed = None
-        if seed is not None:
-            random.seed(seed)
-        block = BlockMarblebag(screen, random.seed(seed))
-        
-    elif selected_option == "progressive" and check_selected_option != selected_option:
-        check_selected_option = "progressive"
-        block = BlockProgressive(screen,50,10)
-    elif selected_option == "fixed_random" and check_selected_option != selected_option:
-        check_selected_option = "fixed_random"
-        block = BlockFixRate(screen,50,3)
-    elif selected_option == "predetermination" and check_selected_option != selected_option:
-        check_selected_option = "predetermination"
-        block = BlockPredetermination(screen,50)
+    if isBlockBroken:
+        if time.time() - cooldown_start_time >= cooldown_duration: 
+            isBlockBroken = False
+    
+    if isBlockBroken == False:
+        block.draw()
+        if selected_option == "marblebag" and check_selected_option != selected_option:
+            check_selected_option = "marblebag"
+            seed = None
+            if seed is not None:
+                random.seed(seed)
+            block = BlockMarblebag(screen, random.seed(seed))
+            
+        elif selected_option == "progressive" and check_selected_option != selected_option:
+            check_selected_option = "progressive"
+            block = BlockProgressive(screen,50,10)
+        elif selected_option == "fixed_random" and check_selected_option != selected_option:
+            check_selected_option = "fixed_random"
+            block = BlockFixRate(screen,50,3)
+        elif selected_option == "predetermination" and check_selected_option != selected_option:
+            check_selected_option = "predetermination"
+            block = BlockPredetermination(screen,50)
+    else:
+        check_selected_option = None
 
-    block.draw()
+    
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -72,8 +85,13 @@ while running:
                         selected_option = dropdown_options[i]
                         dropdown_open = False
                         break
-            if event.button == 1:
-                print(block.dig_block())
+            elif event.button == 1:
+                    if isBlockBroken == False:
+                        getOre = block.dig_block()
+                        if(getOre != None and getOre != "Nothing"):
+                            print(getOre)
+                            cooldown_start_time = time.time()
+                            isBlockBroken = True
     
     pygame.display.flip()
 
