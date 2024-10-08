@@ -5,7 +5,7 @@ from blockMarblebag import BlockMarblebag
 from blockFixRateRandom import BlockFixRate
 from blockPredetermination import BlockPredetermination
 from blockProgressive import BlockProgressive
-
+from showOre import ShowOres
 
 pygame.init()
 
@@ -22,6 +22,7 @@ dropdown_rect = pygame.Rect(50, 50, 200, 40)
 option_rects = [pygame.Rect(50, 90 + i * 40, 200, 40) for i in range(len(dropdown_options))]
 check_selected_option = None
 isBlockBroken = False
+showOre = ShowOres(screen, font)
 
 cooldown_start_time = 0
 cooldown_duration = 2 
@@ -70,9 +71,8 @@ while running:
             block = BlockPredetermination(screen,50)
     else:
         check_selected_option = None
-
-    
-    
+        showOre.draw(getOre)
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
